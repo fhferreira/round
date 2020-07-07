@@ -16,7 +16,6 @@ src/
 tests/
 ```
 
-
 ## Install
 
 Via Composer
@@ -28,9 +27,10 @@ $ composer require fhferreira/round
 ## Usage
 
 ``` php
-$rounder = new Fhferreira\Round();
-echo $rounder->ABNT_NBR_5891(12,744623);
-// should echo 12,74
+use Fhferreira\Round\AbntNbr5891;
+
+echo AbntNbr5891::round(12.744623);
+// it should echo 12.74
 ```
 
 ## Testing
