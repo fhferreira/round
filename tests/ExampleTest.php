@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace League\Skeleton;
+namespace Fhferreira\Round;
 
 class ExampleTest extends \PHPUnit\Framework\TestCase
 {

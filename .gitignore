@@ -4,3 +4,10 @@ vendor
 phpcs.xml
 phpunit.xml
 .phpunit.result.cache
+.idea/.gitignore
+.idea/Round.iml
+.idea/composerJson.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/php.xml
+.idea/vcs.xml
