@@ -10,7 +10,7 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name="fhferreira Test Suite">
+        <testsuite name="Fhferreira\Rounder Test Suite">
             <directory>tests</directory>
         </testsuite>
     </testsuites>

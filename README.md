@@ -1,4 +1,4 @@
-# round
+# Fhferreira/Round
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE.md)
@@ -7,7 +7,7 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Round number with normatives like ABNT NBR 5891.
+Round numbers with normatives like ABNT NBR 5891.
 
 ## Structure
 
