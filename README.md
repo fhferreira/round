@@ -7,23 +7,13 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-**Note:** Replace ```Flávio H. Ferreira``` ```fhferreira``` ```https://devphp.in``` ```flaviometalvale@gmail.com``` ```fhferreira``` ```round``` ```Round numbers with normatives``` with their correct values in [README.md](README.md), [CHANGELOG.md](CHANGELOG.md), [CONTRIBUTING.md](CONTRIBUTING.md), [LICENSE.md](LICENSE.md) and [composer.json](composer.json) files, then delete this line. You can run `$ php prefill.php` in the command line to make all replacements at once. Delete the file prefill.php as well.
-
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what
-PSRs you support to avoid any confusion with users and contributors.
+Round number with normatives like ABNT NBR 5891.
 
 ## Structure
 
-If any of the following are applicable to your project, then the directory structure should follow industry best practices by being named the following.
-
 ```
-bin/        
-build/
-docs/
-config/
 src/
 tests/
-vendor/
 ```
 
 
@@ -38,13 +28,10 @@ $ composer require fhferreira/round
 ## Usage
 
 ``` php
-$skeleton = new Fhferreira\Round();
-echo $skeleton->echoPhrase('Hello, League!');
+$rounder = new Fhferreira\Round();
+echo $rounder->ABNT_NBR_5891(12,744623);
+// should echo 12,74
 ```
-
-## Change log
-
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
 ## Testing
 
