@@ -16,10 +16,12 @@ class AbntNbr5891Test extends \PHPUnit\Framework\TestCase
      */
     public function testAmounts()
     {
-        echo PHP_EOL;
-
         $amounts = array(
             //value, expected
+            [1.097, 1.10],
+            [1.099, 1.10],
+            [1.094, 1.09],
+            [1.089, 1.09],
             [12.6529, 12.65],
             [12.86512, 12.87],
             [12.744623, 12.74],
@@ -47,20 +49,21 @@ class AbntNbr5891Test extends \PHPUnit\Framework\TestCase
     {
         $amounts = array(
             //value, percent, expected
-            [100, 12, 12],
-            [100, 13.45, 13.45],
-            [149.57, 60, 89.74],
-            [149.57, 40, 59.83],
-            [4.54, 40, 1.82],
-            [4.54, 60, 2.72],
-            [159.38, 40, 63.75],
-            [159.38, 60, 95.63],
-            [159.38, 35, 55.78],
-            [159.38, 65, 103.60],
+           [100, 12, 12],
+           [100, 13.45, 13.45],
+           [149.57, 60, 89.74],
+           [149.57, 40, 59.83],
+           [4.54, 40, 1.82],
+           [4.54, 60, 2.72],
+           [159.38, 40, 63.75],
+           [159.38, 60, 95.63],
+           [159.38, 35, 55.78],
+           [159.38, 65, 103.60],
         );
 
         foreach ($amounts as $index => $amountInfo) {
-            $rounded = AbntNbr5891::round(AbntNbr5891::getPercentFromAmount($amountInfo[0], $amountInfo[1]));
+            $percent = AbntNbr5891::getPercentFromAmount($amountInfo[0], $amountInfo[1]);
+            $rounded = AbntNbr5891::round($percent);
             $this->assertEquals($amountInfo[2], $rounded);
         }
     }
@@ -69,21 +72,22 @@ class AbntNbr5891Test extends \PHPUnit\Framework\TestCase
     {
         $amounts = array(
             //value, percent, expected
-            [100, 12, 12, 1200],
-            [100, 13.45, 13.45, 1345],
-            [149.57, 60, 89.74, 8974],
-            [149.57, 40, 59.83, 5983],
-            [4.54, 40, 1.82, 182],
-            [4.54, 60, 2.72, 272],
-            [159.38, 40, 63.75, 6375],
-            [159.38, 60, 95.63, 9563],
-            [159.38, 35, 55.78, 5578],
-            [159.38, 65, 103.60, 10360],
+           [100, 12, 12, 1200],
+           [100, 13.45, 13.45, 1345],
+           [149.57, 60, 89.74, 8974],
+           [149.57, 40, 59.83, 5983],
+           [4.54, 40, 1.82, 182],
+           [4.54, 60, 2.72, 272],
+           [159.38, 40, 63.75, 6375],
+           [159.38, 60, 95.63, 9563],
+           [159.38, 35, 55.78, 5578],
+           [159.38, 65, 103.60, 10360],
         );
 
         foreach ($amounts as $index => $amountInfo) {
-            $rounded = AbntNbr5891::round(AbntNbr5891::getPercentFromAmount($amountInfo[0], $amountInfo[1]));
-            $this->assertEquals($rounded * 100, $amountInfo[3]);
+            $percent = AbntNbr5891::getPercentFromAmount($amountInfo[0], $amountInfo[1]);
+            $rounded = AbntNbr5891::round($percent);
+            $this->assertEquals((int) $amountInfo[3], $rounded * 100);
         }
     }
 

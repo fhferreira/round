@@ -96,12 +96,14 @@ class AbntNbr5891
         } else {
             if ($up) {
                 $decimals = $decimalsStr + 1;
-                $sumInt = $decimals == 100 ? 1 : 0;
-                if ($sumInt > 0) {
+                $sumInt = $decimals >= 100 ? 1 : 0;
+                if ($sumInt > 0 && $decimals == 100) {
                     $decimals = '00';
+                } else if ($sumInt > 0 && $decimals > 100) {
+                    $decimals = $decimals - 100;
                 }
 
-                if ($decimalsStr[0] == 0) {
+                if ($decimalsStr[0] == 0 && $decimals < 10) {
                     $decimals = '0' . $decimals;
                 }
 
@@ -121,6 +123,6 @@ class AbntNbr5891
      */
     public static function getPercentFromAmount($value, $percent = 100): float
     {
-        return (float)($value / 100 * $percent);
+        return (float) ($value / 100 * $percent);
     }
 }
