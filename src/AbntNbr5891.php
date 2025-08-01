@@ -108,6 +108,10 @@ class AbntNbr5891
                 }
 
                 $final = ((float)(($intPart + $sumInt) . '.' . ($decimals)));
+
+                if ($intPart === '-0') {
+                    $final *= -1;
+                }
             }
         }
 
