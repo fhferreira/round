@@ -43,6 +43,7 @@ class AbntNbr5891Test extends \PHPUnit\Framework\TestCase
             [0.046, 0.05],
             [0.026, 0.03],
             [0.2345645, 0.23],
+            [-0.775, -0.78]
         );
 
         foreach ($amounts as $index => $amountInfo) {
