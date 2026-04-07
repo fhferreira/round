@@ -32,98 +32,102 @@ use Fhferreira\Round\Exceptions\CommaException;
  */
 class AbntNbr5891
 {
-    /** Round number using brazilian normative ABNT NBR 5891
+    /**
+     * Round a number to two decimal places following ABNT NBR 5891.
      *
-     * @param $number
+     * Rules, given the digits immediately after the last one to keep:
+     *   - strictly less than 5           → keep
+     *   - strictly greater than 5        → increment
+     *   - equal to 5 followed by any
+     *     non-zero digit                 → increment
+     *   - equal to 5 followed only by
+     *     zeros                          → round half to even
      *
-     * @return mixed
+     * @param int|float|string $number
+     *
      * @throws CommaException
      */
-    public static function round($number)
+    public static function round($number): float
     {
-        $number = (string)$number;
+        $number = (string) $number;
 
         if (strpos($number, ',') !== false) {
             throw new CommaException();
         }
 
-        $numberArr = explode('.', "" . $number);
-
-        $intPart = $numberArr[0];
-        $decimalsNumbers = isset($numberArr[1]) ? (string)$numberArr[1] : '00';
-
-        $down = false;
-        $up = false;
-
-        if (strlen($decimalsNumbers) <= 2) {
-            $decimalsNumbers = str_pad($decimalsNumbers, 2, '0', STR_PAD_RIGHT);
-            return ((float)($intPart . '.' . $decimalsNumbers));
+        $negative = isset($number[0]) && $number[0] === '-';
+        if ($negative) {
+            $number = substr($number, 1);
         }
 
-        $decimalsStr = substr($decimalsNumbers, 0, 2);
-        $restStr = substr($decimalsNumbers, 2);
+        [$intPart, $decimals] = self::splitNumber($number);
 
-        if (strlen($restStr) == 1) {
-            $restStr = $restStr . '0';
+        // Fewer than three decimal digits: nothing to round, just normalize.
+        if (strlen($decimals) <= 2) {
+            return self::toFloat($intPart, str_pad($decimals, 2, '0', STR_PAD_RIGHT), $negative);
         }
 
-        $strlenRest = strlen($restStr);
-        $finalRest = str_pad('5', $strlenRest, '0', STR_PAD_RIGHT);
+        $kept = substr($decimals, 0, 2);
+        $tail = substr($decimals, 2);
 
-        if ($restStr < $finalRest) {
-            $down = true;
-            $up = false;
+        if (!self::shouldRoundUp($kept, $tail)) {
+            return self::toFloat($intPart, $kept, $negative);
+        }
+
+        $incremented = ((int) $kept) + 1;
+        if ($incremented === 100) {
+            $intPart = (string) (((int) $intPart) + 1);
+            $kept = '00';
         } else {
-            if ($restStr > $finalRest) {
-                $down = false;
-                $up = true;
-            } else {
-                if ($restStr == $finalRest) {
-                    if (((int)$decimalsStr[1]) % 2 == 1) {
-                        $down = false;
-                        $up = true;
-                    } else {
-                        $down = true;
-                        $up = false;
-                    }
-                }
-            }
+            $kept = str_pad((string) $incremented, 2, '0', STR_PAD_LEFT);
         }
 
-        $final = 0;
-        if ($down) {
-            $final = ((float)($intPart . '.' . $decimalsStr));
-        } else {
-            if ($up) {
-                $decimals = $decimalsStr + 1;
-                $sumInt = $decimals >= 100 ? 1 : 0;
-                if ($sumInt > 0 && $decimals == 100) {
-                    $decimals = '00';
-                } else if ($sumInt > 0 && $decimals > 100) {
-                    $decimals = $decimals - 100;
-                }
-
-                if ($decimalsStr[0] == 0 && $decimals < 10) {
-                    $decimals = '0' . $decimals;
-                }
-
-                $final = ((float)(($intPart + $sumInt) . '.' . ($decimals)));
-
-                if ($intPart === '-0') {
-                    $final *= -1;
-                }
-            }
-        }
-
-        return $final;
+        return self::toFloat($intPart, $kept, $negative);
     }
 
     /**
-     * @param      $value
-     * @param int  $percent
-     * @param bool $rounded
+     * Decide whether to increment the last kept digit according to NBR 5891.
+     */
+    private static function shouldRoundUp(string $kept, string $tail): bool
+    {
+        $half = str_pad('5', strlen($tail), '0', STR_PAD_RIGHT);
+
+        if ($tail > $half) {
+            return true;
+        }
+
+        if ($tail === $half) {
+            // Tie: round half to even — increment only when the last kept digit is odd.
+            return ((int) $kept[1]) % 2 === 1;
+        }
+
+        return false;
+    }
+
+    /**
+     * Split an unsigned numeric string into its integer and decimal parts.
      *
-     * @return float
+     * @return array{0: string, 1: string}
+     */
+    private static function splitNumber(string $number): array
+    {
+        $parts = explode('.', $number, 2);
+
+        return [$parts[0], $parts[1] ?? ''];
+    }
+
+    private static function toFloat(string $intPart, string $decimals, bool $negative): float
+    {
+        $result = (float) ($intPart . '.' . $decimals);
+
+        return $negative ? -$result : $result;
+    }
+
+    /**
+     * Return the given percentage of a value.
+     *
+     * @param int|float        $value
+     * @param int|float        $percent
      */
     public static function getPercentFromAmount($value, $percent = 100): float
     {

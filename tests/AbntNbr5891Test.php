@@ -52,6 +52,57 @@ class AbntNbr5891Test extends \PHPUnit\Framework\TestCase
         }
     }
 
+    /**
+     * Worked table from the published ABNT NBR 5891 rounding guide.
+     */
+    public function testNbr5891PublishedTable()
+    {
+        $amounts = array(
+            //value, expected
+            ['0.342', 0.34],
+            ['0.346', 0.35],
+            ['0.3452', 0.35],
+            ['0.3450', 0.34],
+            ['0.332', 0.33],
+            ['0.336', 0.34],
+            ['0.3352', 0.34],
+            ['0.3350', 0.34],
+            ['0.3050', 0.30],
+            ['0.3150', 0.32],
+        );
+
+        foreach ($amounts as $amountInfo) {
+            $rounded = AbntNbr5891::round($amountInfo[0]);
+            $this->assertEquals($amountInfo[1], $rounded, "Rounding {$amountInfo[0]}");
+        }
+    }
+
+    /**
+     * Regression coverage for negative values whose rounding carries into the
+     * integer part. Previously, the carry incremented toward zero instead of
+     * away from zero, producing values like -1.999 → 0.
+     */
+    public function testNegativeCarryOver()
+    {
+        $amounts = array(
+            //value, expected
+            [-1.999, -2.00],
+            [-2.999, -3.00],
+            [-2.995, -3.00],
+            [-0.999, -1.00],
+            [-0.995, -1.00],
+            [-1.236, -1.24],
+            [-1.234, -1.23],
+            [-12.8150, -12.82],
+            [-12.8050, -12.80],
+        );
+
+        foreach ($amounts as $amountInfo) {
+            $rounded = AbntNbr5891::round($amountInfo[0]);
+            $this->assertEquals($amountInfo[1], $rounded, "Rounding {$amountInfo[0]}");
+        }
+    }
+
     public function testPercentFromABNT()
     {
         $amounts = array(
@@ -98,16 +149,11 @@ class AbntNbr5891Test extends \PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @expectedException CommaException
-     */
     public function testCommaException()
     {
-        try {
-            $rounded = AbntNbr5891::round('100,50');
-            $this->fail("Expected CommaException has not been raised.");
-        } catch (CommaException $ex) {
-            $this->assertEquals($ex->getMessage(), 'Comma-formatted numbers are not allowed.');
-        }
+        $this->expectException(CommaException::class);
+        $this->expectExceptionMessage('Comma-formatted numbers are not allowed.');
+
+        AbntNbr5891::round('100,50');
     }
 }
