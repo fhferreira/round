@@ -49,7 +49,9 @@ class AbntNbr5891
      */
     public static function round($number): float
     {
-        $number = (string) $number;
+        $number = is_int($number) || is_float($number)
+            ? self::floatToFixedString((float) $number)
+            : (string) $number;
 
         if (strpos($number, ',') !== false) {
             throw new CommaException();
@@ -114,6 +116,30 @@ class AbntNbr5891
         $parts = explode('.', $number, 2);
 
         return [$parts[0], $parts[1] ?? ''];
+    }
+
+    /**
+     * Convert a numeric value to a plain decimal string, expanding scientific
+     * notation. Without this, residues of float arithmetic such as
+     * `6.9 - 0.34 - 6.56` (which yields ~8.88e-16) would serialize as
+     * "8.8817841970013E-16" and fool the int/decimal split below into seeing
+     * "8" and "88…".
+     */
+    private static function floatToFixedString(float $number): string
+    {
+        $stringValue = (string) $number;
+
+        if (stripos($stringValue, 'e') === false) {
+            return $stringValue;
+        }
+
+        $expanded = number_format($number, 20, '.', '');
+
+        if (strpos($expanded, '.') !== false) {
+            $expanded = rtrim(rtrim($expanded, '0'), '.');
+        }
+
+        return $expanded === '' || $expanded === '-' ? '0' : $expanded;
     }
 
     private static function toFloat(string $intPart, string $decimals, bool $negative): float
