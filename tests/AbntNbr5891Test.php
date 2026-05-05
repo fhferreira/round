@@ -149,6 +149,19 @@ class AbntNbr5891Test extends \PHPUnit\Framework\TestCase
         }
     }
 
+    /**
+     * Regression coverage for floating-point residues that PHP serializes in
+     * scientific notation. Expressions like `6.9 - 0.34 - 6.56` evaluate to
+     * ~8.88e-16 instead of exactly zero; before the fix the string cast
+     * "8.8817841970013E-16" tricked the parser into returning 8.88.
+     */
+    public function testFloatingPointResidueRoundsToZero()
+    {
+        $this->assertSame(0.0, AbntNbr5891::round(6.9 - 0.34 - 0 - 6.56));
+        $this->assertSame(0.0, AbntNbr5891::round(0.1 + 0.2 - 0.3));
+        $this->assertSame(0.0, AbntNbr5891::round(-(6.9 - 0.34 - 6.56)));
+    }
+
     public function testCommaException()
     {
         $this->expectException(CommaException::class);
