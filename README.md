@@ -1,3 +1,5 @@
+
+
 # Fhferreira/Round
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
@@ -30,7 +32,7 @@ $ composer require fhferreira/round
 use Fhferreira\Round\AbntNbr5891;
 
 echo AbntNbr5891::round(12.744623);
-// it should echo 12.74
+// it should echo 12.74; AbntNbr5891::round() returns a float
 ```
 
 ## Testing
